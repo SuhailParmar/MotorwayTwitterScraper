@@ -13,24 +13,26 @@ class RabbitMQClient:
         self.port = config.rabbit_port
         self.queue = config.rabbit_queue
         self.exchange = config.rabbit_exchange
+        self.routing_key = config.rabbit_routing_key
+        self.vhost = config.rabbit_vhost
 
     def connect_to_mq(self):
 
         credentials = pika.PlainCredentials(self.username, self.password)
         parameters = pika.ConnectionParameters(
-            self.host, int(self.port), "/", credentials, ssl=False)
+            self.host, int(self.port), self.vhost, credentials, ssl=False)
 
         connection = pika.BlockingConnection(parameters)
         return connection
     
-    def publish(self, payload, queue=config.rabbit_queue):
+    def publish(self, payload):
         
         channel = self.connect_to_mq().channel()
         channel.basic_publish(self.exchange,
-                            '#',
+                            self.routing_key,
                             payload,
                             pika.BasicProperties(content_type='application/json',
                                                 delivery_mode=1))
         
-        mq_logger.info('Published a message to {}'.format(queue))
+        mq_logger.info('Published a message to {}'.format(self.queue))
         channel.close()
