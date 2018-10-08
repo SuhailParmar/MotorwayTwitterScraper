@@ -3,17 +3,19 @@ import twitter
 import logging
 from file_handler import FileHandler
 
+th_logger = logging.getLogger("TwitterHandler")
+
 
 class TwitterHandler:
 
     def __init__(self):
         self.api = self.authenticate()
-    
+
     def authenticate(self):
-        return twitter.Api(consumer_key=config.API_KEY, 
-                            consumer_secret=config.API_SECRET, 
-                            access_token_key=config.ACCESS_TOKEN,
-                            access_token_secret=config.ACCESS_TOKEN_SECRET)
+        return twitter.Api(consumer_key=config.API_KEY,
+                           consumer_secret=config.API_SECRET,
+                           access_token_key=config.ACCESS_TOKEN,
+                           access_token_secret=config.ACCESS_TOKEN_SECRET)
 
     def extract_id(self, tweet):
         return int(tweet['id'])
@@ -32,9 +34,9 @@ class TwitterHandler:
             arr.append(tweet.AsDict())
         return arr
 
-    def is_recorded_tweet_id_same_as_latest(self,recorded_id):
+    def is_recorded_tweet_id_same_as_latest(self, recorded_id):
         # Get the latest tweet from the user
-        # compare it with the latest recorded id 
+        # compare it with the latest recorded id
         tweets = self.get_tweets_from_user_as_dict(number=1)
         latest_tweet = tweets[0]
 
@@ -43,12 +45,13 @@ class TwitterHandler:
 
     def number_of_tweets_inbetween_last_recorded_and_last_tweeted(self, recorded_id):
         i = 0
-        while i < 30:
+        while i < 100:
             tweets = self.get_tweets_from_user_as_dict(number=i+1)
             if self.extract_id(tweets[i]) == recorded_id:
-                return i # return the difference
-            i+=1
+                th_logger.info('Found {} unrecorded tweets.'.format(i))
+                return i
+            i += 1
 
-        logging.warn('There could be more than {} tweets missing...'.format(i))
-        return False
-
+        th_logger.warn(
+            'There could be more than {} tweets missing...'.format(i))
+        return i
