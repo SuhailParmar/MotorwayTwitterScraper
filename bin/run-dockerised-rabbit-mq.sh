@@ -6,7 +6,7 @@ EXCHANGE="MotorwayExchange"
 ROUTING_KEY="M6_Raw"
 
 # Run MQ in the background
-`sudo docker run -p 15672:15672 -p 5672:5672 rabbitmq:3.7-management` &
+`sudo docker run --name rabbit-mq -h mq -p 15672:15672 -p 5672:5672 rabbitmq:3.7-management` &
 
 echo "Waiting for Rabbit to be up..."
 sleep 20 # ToDo use wait_for it
