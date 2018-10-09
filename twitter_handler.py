@@ -1,6 +1,7 @@
 import config
 import twitter
 import logging
+from sys import exit
 from file_handler import FileHandler
 
 th_logger = logging.getLogger("TwitterHandler")
@@ -28,7 +29,14 @@ class TwitterHandler:
         return a[3]
 
     def get_tweets_from_user_as_dict(self, handle=config.M6_TWITTER_HANDLE, number=1):
-        tweets = self.api.GetUserTimeline(screen_name=handle, count=number)
+
+        try:
+            tweets = self.api.GetUserTimeline(screen_name=handle, count=number)
+            th_logger.debug('Scraped {} users tweets.'.format(len(tweets)))
+        except Exception as e:
+            th_logger.error(e)
+            exit(1)
+        
         arr = []
         for tweet in tweets:
             arr.append(tweet.AsDict())
@@ -47,11 +55,12 @@ class TwitterHandler:
         i = 0
         while i < 100:
             tweets = self.get_tweets_from_user_as_dict(number=i+1)
-            if self.extract_id(tweets[i]) == recorded_id:
-                th_logger.info('Found {} unrecorded tweets.'.format(i))
+            latest_id = self.extract_id(tweets[i])
+            if latest_id == recorded_id:
+                th_logger.info('Found {} unrecorded tweet(s)!'.format(i))
                 return i
             i += 1
 
-        th_logger.warn(
-            'There could be more than {} tweets missing...'.format(i))
-        return i
+        th_logger.error(
+            'There could be more than {} tweet(s) missing...'.format(i))
+        exit(1)
