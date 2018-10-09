@@ -18,7 +18,7 @@ def main():
     fh = FileHandler()
     mq = RabbitMQClient()
 
-    main_logger.info('Starting Tweet Scraping account @{}'.format
+    main_logger.info('Starting Tweet Scraping [account @{}]'.format
                      (config.M6_TWITTER_HANDLE))
 
     # Obtain the first tweet from the user and convert to an array of dicts

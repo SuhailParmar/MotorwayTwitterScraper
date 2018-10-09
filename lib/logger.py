@@ -17,7 +17,7 @@ class Logger:
 
         logging.basicConfig(level=logging.DEBUG,
                             filename=config.log_file,
-                            format='%(asctime)s [%(levelname)s]: %(message)s',
+                            format='%(asctime)s [%(name)s] [%(levelname)s]: %(message)s',
                             datefmt='%Y-%m-%dT%H:%M:%S')
 
         console_logger = logging.StreamHandler()  # Handler to write to stdout
@@ -27,7 +27,10 @@ class Logger:
             console_logging_format, datefmt='%Y-%m-%dT%H:%M:%S')
         console_logger.setFormatter(console_format)
 
-        # or, disable propagation
+        # Prevent noise in log
         logging.getLogger("pika").propagate = False
         logging.getLogger('').addHandler(console_logger)
         logging.getLogger("requests").setLevel(logging.WARNING)
+        logging.getLogger("urllib3").setLevel(logging.WARNING)
+        logging.getLogger("requests_oauthlib").setLevel(logging.WARNING)
+        logging.getLogger("oauthlib").setLevel(logging.WARNING)
