@@ -1,5 +1,5 @@
-from twitter_handler import TwitterHandler
-from file_handler import FileHandler
+from lib.twitter_handler import TwitterHandler
+from lib.file_handler import FileHandler
 
 
 class TestTwitterHandlerTests:

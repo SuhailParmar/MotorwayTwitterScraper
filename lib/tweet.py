@@ -17,7 +17,6 @@ class Tweet:
     @staticmethod
     def to_tweet(tweets_dict_array):
         arr = []
-        
         for tweet in tweets_dict_array:
             t = Tweet(screen_name=tweet['user']["screen_name"],
                       created_at=tweet["created_at"],

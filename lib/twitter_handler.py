@@ -1,8 +1,8 @@
-import config
 import twitter
 import logging
 from sys import exit
-from file_handler import FileHandler
+import lib.config as config
+from lib.file_handler import FileHandler
 
 th_logger = logging.getLogger("TwitterHandler")
 
@@ -32,11 +32,10 @@ class TwitterHandler:
 
         try:
             tweets = self.api.GetUserTimeline(screen_name=handle, count=number)
-            th_logger.debug('Scraped {} users tweets.'.format(len(tweets)))
         except Exception as e:
             th_logger.error(e)
             exit(1)
-        
+        th_logger.debug('Scraped {} tweets from user.'.format(len(tweets)))
         arr = []
         for tweet in tweets:
             arr.append(tweet.AsDict())

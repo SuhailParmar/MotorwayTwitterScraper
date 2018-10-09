@@ -1,11 +1,13 @@
 import twitter
-import config
 import logging
-from logger import Logger
-from file_handler import FileHandler
-from twitter_handler import TwitterHandler
-from rabbitmq_client import RabbitMQClient
-from tweet import Tweet
+import lib.config as config
+
+from lib.logger import Logger
+from lib.file_handler import FileHandler
+from lib.twitter_handler import TwitterHandler
+from lib.rabbitmq_client import RabbitMQClient
+from lib.tweet import Tweet
+
 
 main_logger = logging.getLogger("Main")
 Logger.initiate_logger()
@@ -16,7 +18,7 @@ def main():
     fh = FileHandler()
     mq = RabbitMQClient()
 
-    main_logger.info('Starting Tweet Scraping account @{}'.format
+    main_logger.info('Starting Tweet Scraping [account @{}]'.format
                      (config.M6_TWITTER_HANDLE))
 
     # Obtain the first tweet from the user and convert to an array of dicts
@@ -44,7 +46,6 @@ def main():
 
             tweet_arr = Tweet.to_tweet(tweets_dict_array)
             mq.publish(tweet_arr)
-        
 
     main_logger.info('Finished Scraping.')
 
