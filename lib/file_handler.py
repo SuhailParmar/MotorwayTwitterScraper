@@ -22,7 +22,7 @@ class FileHandler:
         with open(self.filename, mode='w') as a_file:
             a_file.write(id)
             a_file.close()
-            fh_logger.debug("Successfully written id:{} to file".format(id))
+            fh_logger.info("Successfully written id:{} to file".format(id))
             return True
         return False
 

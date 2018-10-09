@@ -48,7 +48,16 @@ class TwitterHandler:
         latest_tweet = tweets[0]
 
         latest_tweet_id = self.extract_id(latest_tweet)
-        return (recorded_id == latest_tweet_id)
+        is_same = (recorded_id == latest_tweet_id)
+
+        log = ""  # Not sure of an easier way to impl this.
+        if not is_same:
+            log = " not"
+        
+        th_logger.info('The last recorded tweet is{} the same as the latest tweet.'
+                       .format(log))
+
+        return is_same
 
     def number_of_tweets_inbetween_last_recorded_and_last_tweeted(self, recorded_id):
         i = 0
