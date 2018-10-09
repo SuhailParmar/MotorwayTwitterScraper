@@ -24,6 +24,6 @@ class Tweet:
                       id=tweet["id"],
                       payload=tweet["text"])
 
-            arr.append(t.as_json())
+            arr.append(t.as_json)
 
         return arr
