@@ -1,8 +1,10 @@
 import pika
 import config
 import logging
+from sys import exit
 
-mq_logger = logging.getLogger("RMQ")
+mq_logger = logging.getLogger("RabbitMqClient")
+
 
 class RabbitMQClient:
 
@@ -15,6 +17,7 @@ class RabbitMQClient:
         self.exchange = config.rabbit_exchange
         self.routing_key = config.rabbit_routing_key
         self.vhost = config.rabbit_vhost
+        self.type = 'application/json'
 
     def connect_to_mq(self):
 
@@ -22,17 +25,34 @@ class RabbitMQClient:
         parameters = pika.ConnectionParameters(
             self.host, int(self.port), self.vhost, credentials, ssl=False)
 
-        connection = pika.BlockingConnection(parameters)
+        try:
+            connection = pika.BlockingConnection(parameters)
+            mq_logger.info('Successfully connected to rabbit.')
+        except Exception as e:
+            mq_logger.error(e)
+            exit(1)
+
         return connection
-    
-    def publish(self, payload):
-        
+
+    def publish(self, tweets):
+        """
+        @tweets - An Array of one or many tweets as json, see Tweet.to_tweet()
+        """
         channel = self.connect_to_mq().channel()
-        channel.basic_publish(self.exchange,
-                            self.routing_key,
-                            payload,
-                            pika.BasicProperties(content_type='application/json',
-                                                delivery_mode=1))
-        
-        mq_logger.info('Published a message to {}'.format(self.queue))
+        mq_logger.info('Attempting to publish...')
+        for tweet in tweets:
+
+            try:
+                channel.basic_publish(self.exchange,
+                                      self.routing_key,
+                                      tweet,
+                                      pika.BasicProperties(content_type=self.type,
+                                                           delivery_mode=1))
+
+                mq_logger.info('Published a message to {}'.format(self.queue))
+
+            except Exception as e:
+                mq_logger.error(e)
+                exit(1)
+
         channel.close()
