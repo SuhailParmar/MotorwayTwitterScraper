@@ -1,5 +1,5 @@
 import logging
-import config
+import lib.config as config
 
 '''
 The logger will write to a file alongside stdout.

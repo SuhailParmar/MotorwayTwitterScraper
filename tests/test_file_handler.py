@@ -1,15 +1,14 @@
-import config
-import pytest
+from pytest import raises
+import lib.config as config
 from lib.file_handler import FileHandler
 
 
 class TestFileHandlerTests:
-    
     fh = FileHandler()
 
     def test_file_not_found(self):
         fh2 = FileHandler("doesnt_exist.txt")
-        with pytest.raises(FileNotFoundError):
+        with raises(FileNotFoundError):
             fh2.read_id_from_file()
 
     def test_write_a_to_file(self):

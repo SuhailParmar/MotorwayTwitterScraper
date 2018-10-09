@@ -1,8 +1,8 @@
 import pika
-import config
 import logging
 from json import dumps
 from sys import exit
+import lib.config as config
 
 mq_logger = logging.getLogger("RabbitMqClient")
 

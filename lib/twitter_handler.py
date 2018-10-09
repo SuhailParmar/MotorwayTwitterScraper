@@ -1,8 +1,8 @@
-import config
 import twitter
 import logging
 from sys import exit
-from file_handler import FileHandler
+import lib.config as config
+from lib.file_handler import FileHandler
 
 th_logger = logging.getLogger("TwitterHandler")
 
@@ -36,7 +36,7 @@ class TwitterHandler:
         except Exception as e:
             th_logger.error(e)
             exit(1)
-        
+
         arr = []
         for tweet in tweets:
             arr.append(tweet.AsDict())

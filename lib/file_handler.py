@@ -1,7 +1,8 @@
-import config
 import logging
-import os.path
-import os
+from os import path
+from os import remove
+import lib.config as config
+
 
 fh_logger = logging.getLogger("FileHandler")
 
@@ -13,7 +14,7 @@ class FileHandler:
 
     @staticmethod
     def file_exists(filename=config.FILENAME):
-        return os.path.exists(filename)
+        return path.exists(filename)
 
     def write_id_to_file(self, id):
         # Writes regardless of a file pre-existing
@@ -39,7 +40,7 @@ class FileHandler:
 
     def clean_up_file(self):
         try:
-            os.remove(self.filename)
+            remove(self.filename)
             fh_logger.info('Removed file {}'.format(self.filename))
             return True
         except Exception:

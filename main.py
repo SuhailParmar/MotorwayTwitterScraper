@@ -19,7 +19,7 @@ def main():
     mq = RabbitMQClient()
 
     main_logger.info('Starting Tweet Scraping account @{}'.format
-                     (fh.filename))
+                     (config.M6_TWITTER_HANDLE))
 
     # Obtain the first tweet from the user and convert to an array of dicts
     tweets = th.get_tweets_from_user_as_dict()
