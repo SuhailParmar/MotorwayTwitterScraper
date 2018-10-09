@@ -1,6 +1,5 @@
 import twitter
 import config
-import threading
 import logging
 from logger import Logger
 from file_handler import FileHandler
@@ -9,35 +8,31 @@ from rabbitmq_client import RabbitMQClient
 from tweet import Tweet
 
 main_logger = logging.getLogger("Main")
+Logger.initiate_logger()
 
 
 def main():
-
     th = TwitterHandler()
     fh = FileHandler()
     mq = RabbitMQClient()
 
-    Logger.initiate_logger()
+    main_logger.info('Starting Tweet Scraping account @{}'.format
+                     (config.M6_TWITTER_HANDLE))
 
-    main_logger.info('Starting poll...')
-    threading.Timer(30, main).start()
-
-    # Grab the latest Tweet
+    # Obtain the first tweet from the user and convert to an array of dicts
     tweets = th.get_tweets_from_user_as_dict()
     latest_tweet = tweets[0]
 
-    # Inspect the tweet's id with the one from record
     if not fh.file_exists():
         latest_tweet_id = th.extract_id(latest_tweet)
-        fh.write_to_text_file(latest_tweet_id)
+        fh.write_id_to_file(latest_tweet_id)
 
         # remove unnecessary json values
         tweet_arr = Tweet.to_tweet(tweets)
         mq.publish(tweet_arr)
 
     else:
-        last_recorded_tweet_id = fh.read_from_text_file()
-
+        last_recorded_tweet_id = fh.read_id_from_file()
         if not th.is_recorded_tweet_id_same_as_latest(last_recorded_tweet_id):
 
             tweets_missing =\
@@ -49,11 +44,10 @@ def main():
 
             tweet_arr = Tweet.to_tweet(tweets_dict_array)
             mq.publish(tweet_arr)
-    
-    main_logger.info('Finished poll.')
+        
+
+    main_logger.info('Finished Scraping.')
 
 
 if __name__ == "__main__":
-    Logger.initiate_logger()
-    while True:
-        main()
+    main()

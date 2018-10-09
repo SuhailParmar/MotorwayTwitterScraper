@@ -1,6 +1,7 @@
 import pika
 import config
 import logging
+from json import dumps
 from sys import exit
 
 mq_logger = logging.getLogger("RabbitMqClient")
@@ -20,7 +21,7 @@ class RabbitMQClient:
         self.type = 'application/json'
 
     def connect_to_mq(self):
-
+        mq_logger.info('Connecting to mq')
         credentials = pika.PlainCredentials(self.username, self.password)
         parameters = pika.ConnectionParameters(
             self.host, int(self.port), self.vhost, credentials, ssl=False)
@@ -39,7 +40,8 @@ class RabbitMQClient:
         @tweets - An Array of one or many tweets as json, see Tweet.to_tweet()
         """
         channel = self.connect_to_mq().channel()
-        mq_logger.info('Attempting to publish...')
+        mq_logger.info(
+            'Attempting to publish {} tweet(s) to rabbit.'.format(len(tweets)))
         for tweet in tweets:
 
             try:
@@ -49,7 +51,8 @@ class RabbitMQClient:
                                       pika.BasicProperties(content_type=self.type,
                                                            delivery_mode=1))
 
-                mq_logger.info('Published a message to {}'.format(self.queue))
+                mq_logger.info(
+                    'Published Message:{0} to queue:{1}'.format(tweet, self.queue))
 
             except Exception as e:
                 mq_logger.error(e)
