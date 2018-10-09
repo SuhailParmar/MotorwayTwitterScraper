@@ -1,8 +1,9 @@
 import pika
 import logging
-from json import dumps
+from json import dumps, loads
 from sys import exit
 import lib.config as config
+from lib.file_handler import FileHandler
 
 mq_logger = logging.getLogger("RabbitMqClient")
 
@@ -21,7 +22,7 @@ class RabbitMQClient:
         self.type = 'application/json'
 
     def connect_to_mq(self):
-        mq_logger.info('Connecting to mq')
+        mq_logger.info('Connecting to mq...')
         credentials = pika.PlainCredentials(self.username, self.password)
         parameters = pika.ConnectionParameters(
             self.host, int(self.port), self.vhost, credentials, ssl=False)
@@ -45,17 +46,24 @@ class RabbitMQClient:
         for tweet in tweets:
 
             try:
+                """
                 channel.basic_publish(self.exchange,
                                       self.routing_key,
                                       tweet,
                                       pika.BasicProperties(content_type=self.type,
                                                            delivery_mode=1))
-
+                """
                 mq_logger.info(
                     'Published Message:{0} to queue:{1}'.format(tweet, self.queue))
 
             except Exception as e:
                 mq_logger.error(e)
                 exit(1)
+
+        if len(tweets) > 0:
+            # The array is sorted in descending created_at order
+            fh = FileHandler()
+            tweet_json = loads(tweets[0])
+            fh.write_id_to_file(id=tweet_json["id"])
 
         channel.close()

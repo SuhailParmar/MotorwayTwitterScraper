@@ -19,16 +19,13 @@ def main():
     mq = RabbitMQClient()
 
     main_logger.info('Starting Tweet Scraping [account @{}]'.format
-                     (config.M6_TWITTER_HANDLE))
+                     (config.twitter_handle))
 
     # Obtain the first tweet from the user and convert to an array of dicts
     tweets = th.get_tweets_from_user_as_dict()
     latest_tweet = tweets[0]
 
     if not fh.file_exists():
-        latest_tweet_id = th.extract_id(latest_tweet)
-        fh.write_id_to_file(latest_tweet_id)
-
         # remove unnecessary json values
         tweet_arr = Tweet.to_tweet(tweets)
         mq.publish(tweet_arr)
@@ -48,7 +45,6 @@ def main():
             mq.publish(tweet_arr)
 
     main_logger.info('Finished Scraping.')
-
 
 if __name__ == "__main__":
     main()
