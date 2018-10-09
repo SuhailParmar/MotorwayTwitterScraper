@@ -13,10 +13,10 @@ class TwitterHandler:
         self.api = self.authenticate()
 
     def authenticate(self):
-        return twitter.Api(consumer_key=config.API_KEY,
-                           consumer_secret=config.API_SECRET,
-                           access_token_key=config.ACCESS_TOKEN,
-                           access_token_secret=config.ACCESS_TOKEN_SECRET)
+        return twitter.Api(consumer_key=config.api_key,
+                           consumer_secret=config.api_secret,
+                           access_token_key=config.access_token,
+                           access_token_secret=config.access_token_secret)
 
     def extract_id(self, tweet):
         return int(tweet['id'])
@@ -28,7 +28,7 @@ class TwitterHandler:
         a = created_at.split()
         return a[3]
 
-    def get_tweets_from_user_as_dict(self, handle=config.M6_TWITTER_HANDLE, number=1):
+    def get_tweets_from_user_as_dict(self, handle=config.twitter_handle, number=1):
 
         try:
             tweets = self.api.GetUserTimeline(screen_name=handle, count=number)

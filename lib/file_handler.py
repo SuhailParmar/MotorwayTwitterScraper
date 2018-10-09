@@ -9,11 +9,11 @@ fh_logger = logging.getLogger("FileHandler")
 
 class FileHandler:
 
-    def __init__(self, filename=config.FILENAME):
+    def __init__(self, filename=config.last_tweet_id_filename):
         self.filename = filename
 
     @staticmethod
-    def file_exists(filename=config.FILENAME):
+    def file_exists(filename=config.last_tweet_id_filename):
         return path.exists(filename)
 
     def write_id_to_file(self, id):
