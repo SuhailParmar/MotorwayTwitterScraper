@@ -46,13 +46,11 @@ class RabbitMQClient:
         for tweet in tweets:
 
             try:
-                """
                 channel.basic_publish(self.exchange,
                                       self.routing_key,
                                       tweet,
                                       pika.BasicProperties(content_type=self.type,
                                                            delivery_mode=1))
-                """
                 mq_logger.info(
                     'Published Message:{0} to queue:{1}'.format(tweet, self.queue))
 
