@@ -23,7 +23,6 @@ def main():
 
     # Obtain the first tweet from the user and convert to an array of dicts
     tweets = th.get_tweets_from_user_as_dict()
-    latest_tweet = tweets[0]
 
     if not fh.file_exists():
         # remove unnecessary json values
