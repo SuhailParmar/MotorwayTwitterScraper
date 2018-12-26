@@ -1,8 +1,8 @@
 import logging
 from time import sleep
 from json import loads
-import lib.config as config
 
+import lib.config as config
 from lib.logger import Logger
 from lib.file_handler import FileHandler
 from lib.twitter_handler import TwitterHandler
@@ -70,5 +70,8 @@ class Scraper:
         tweet_arr = Tweet.to_tweet(tweets_dict_array)
         self.mq.publish(tweet_arr)
 
-        tweet_json = loads(tweet_arr[0])
+        # The last tweet in array was tweeted the most recently
+        tweet_arr_length = len(tweet_arr) - 1
+        tweet_json = loads(tweet_arr[tweet_arr_length])
         self.fh.write_id_to_file(id=tweet_json["id"])
+        self.last_recorded_tweet_id = tweet_json["id"]
