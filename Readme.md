@@ -2,6 +2,29 @@
 
 This is the first part of collecting data from motorway cameras. There are a numerous amount of cameras all along each english motorway. The cameras are paired with a twitter bot, which reports any incidents on the road. This app will obtain the tweets from the twitter accounts and convert them into a 'message'.
 
+The scraper is run periodically. The environment variable ```$PERIOD``` can be set to an int value to scrape every int seconds. Otherwise defaults to 60 seconds.
+
+You require a twitter dev account and application. Alongside a running rabbit_mq.
+
+## Installation Steps
+
+### Easy Method
+1. Install requirements
+
+```
+pip install -R requirements.txt
+```
+
+2. Rename example_config.py to config.py and populate the files. OR use a .env file.
+
+
+3. Run Application
+
+```sh
+python3.6 main.py # Use your python version
+```
+
+### Dockerised
 
 1. To run this project Docker needs to be installed.
 
