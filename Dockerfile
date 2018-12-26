@@ -17,6 +17,6 @@ RUN apk add --no-cache python3 && \
 rm -r /root/.cache
 
 # 2 External dependencies
-RUN pip install python-twitter
-RUN pip install pika
+RUN pip install -R requirements.txt
+
 CMD ["python3", "/app/main.py"]
