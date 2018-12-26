@@ -58,10 +58,4 @@ class RabbitMQClient:
                 mq_logger.error(e)
                 exit(1)
 
-        if len(tweets) > 0:
-            # The array is sorted in descending created_at order
-            fh = FileHandler()
-            tweet_json = loads(tweets[0])
-            fh.write_id_to_file(id=tweet_json["id"])
-
         channel.close()
