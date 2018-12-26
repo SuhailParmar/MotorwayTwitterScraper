@@ -1,49 +1,30 @@
-import twitter
 import logging
+from time import sleep
 import lib.config as config
 
 from lib.logger import Logger
-from lib.file_handler import FileHandler
-from lib.twitter_handler import TwitterHandler
-from lib.rabbitmq_client import RabbitMQClient
+from lib.scraper import Scraper
 from lib.tweet import Tweet
 
 
 main_logger = logging.getLogger("Main")
-Logger.initiate_logger()
 
 
 def main():
-    th = TwitterHandler()
-    fh = FileHandler()
-    mq = RabbitMQClient()
+    if not isinstance(config.period, int):
+        main_logger.info('Period ENV variable needs to be an Integer.')
+        exit(1)
+    sc = Scraper()
 
-    main_logger.info('Starting Tweet Scraping [account @{}]'.format
-                     (config.twitter_handle))
-
-    # Obtain the first tweet from the user and convert to an array of dicts
-    tweets = th.get_tweets_from_user_as_dict()
-
-    if not fh.file_exists():
-        # remove unnecessary json values
-        tweet_arr = Tweet.to_tweet(tweets)
-        mq.publish(tweet_arr)
-
-    else:
-        last_recorded_tweet_id = fh.read_id_from_file()
-        if not th.is_recorded_tweet_id_same_as_latest(last_recorded_tweet_id):
-
-            tweets_missing =\
-                th.number_of_tweets_inbetween_last_recorded_and_last_tweeted(
-                    last_recorded_tweet_id)
-
-            tweets_dict_array =\
-                th.get_tweets_from_user_as_dict(number=tweets_missing)
-
-            tweet_arr = Tweet.to_tweet(tweets_dict_array)
-            mq.publish(tweet_arr)
-
-    main_logger.info('Finished Scraping.')
+    while True:
+        try:
+            sc.scrape()
+            main_logger.info('Finsihed scraping.')
+            main_logger.info('Halting for {} seconds.'.format(config.period))
+            sleep(config.period)
+        except KeyboardInterrupt:
+            main_logger.info('Finished Scraper.')
+            exit(1)
 
 if __name__ == "__main__":
     main()
