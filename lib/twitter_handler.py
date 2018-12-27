@@ -40,7 +40,8 @@ class TwitterHandler:
             exit(1)
 
         th_logger.debug('Scraped {} tweets from user.'.format(len(tweets)))
-        th_logger.debug('Converting {} tweets into python dictionary.'.format(len(tweets)))
+        th_logger.debug(
+            'Converting {} tweets into python dictionary.'.format(len(tweets)))
 
         arr = []
         for tweet in tweets:
@@ -52,16 +53,34 @@ class TwitterHandler:
         return (recorded == latest)
 
     def number_of_tweets_inbetween_last_recorded_and_last_tweeted(self, recorded_id):
-        # TODO Refactor to loop in decending order
-        i = 0
-        while i < 100:
-            tweets = self.get_tweets_from_user_as_dict(number=i+1)
-            latest_id = self.extract_id(tweets[i])
-            if latest_id == recorded_id:
-                th_logger.info('Found {} unrecorded tweet(s)!'.format(i))
-                return i
-            i += 1
+        n = 5  # Number of tweets to grab at one time
+        i = 0  # Index of the tweets array
 
-        th_logger.error(
+        tweets = None
+        while i < 100:
+            tweets = self.get_tweets_from_user_as_dict(number=i+n)
+            # API only allows for scraping of n events not n-x
+            # We will recieve the tweets validated by the previous loop
+            # Therefore only validate unvalidated tweets
+            unvalidated_tweets = tweets[i:]
+
+            for ind, tweet in enumerate(unvalidated_tweets):
+                tweet_id = self.extract_id(tweet)
+                if tweet_id == recorded_id:
+                    # Calculate the tweet before the last recorded
+                    slice_val = (len(tweets) - (n - ind))
+                    tweets = tweets[:slice_val]
+                    # Prevents sending duplicate events
+                    th_logger.info('Found {} unrecorded tweet(s)!'.format
+                                   (len(tweets)))
+                    return tweets
+
+            i += n
+
+        th_logger.warning(
             'There could be more than {} tweet(s) missing...'.format(i))
-        exit(1)
+
+        th_logger.warning(
+            'Scraping {} tweets regardless.'.format(i))
+
+        return tweets
