@@ -63,15 +63,10 @@ class Scraper:
             self.th.number_of_tweets_inbetween_last_recorded_and_last_tweeted(
                 self.last_recorded_tweet_id)
 
-        scraper_logger.info('{} unrecorded tweets found!')
-        tweets_dict_array =\
-            self.th.get_tweets_from_user_as_dict(number=tweets_missing)
-
-        tweet_arr = Tweet.to_tweet(tweets_dict_array)
+        tweet_arr = Tweet.to_tweet(tweets_missing)
         self.mq.publish(tweet_arr)
 
-        # The last tweet in array was tweeted the most recently
-        tweet_arr_length = len(tweet_arr) - 1
-        tweet_json = loads(tweet_arr[tweet_arr_length])
+        # The first tweet in array was tweeted the most recently
+        tweet_json = loads(tweet_arr[0])
         self.fh.write_id_to_file(id=tweet_json["id"])
         self.last_recorded_tweet_id = tweet_json["id"]
