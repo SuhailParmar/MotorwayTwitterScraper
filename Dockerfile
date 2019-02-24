@@ -6,6 +6,7 @@ WORKDIR /app
 RUN mkdir /app/lib
 COPY lib /app/lib
 COPY main.py /app
+COPY requirements.txt /app
 
 # Volume Mount Is Neccesary for id storage
 RUN apk add --no-cache python3 && \
@@ -17,6 +18,7 @@ RUN apk add --no-cache python3 && \
 rm -r /root/.cache
 
 # 2 External dependencies
-RUN pip install -R requirements.txt
+RUN pip install -r requirements.txt
+RUN rm /app/requirements.txt
 
 CMD ["python3", "/app/main.py"]

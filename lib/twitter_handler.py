@@ -34,7 +34,8 @@ class TwitterHandler:
         Tweets need to be returned as a pydict
         """
         try:
-            tweets = self.api.GetUserTimeline(screen_name=handle, count=number)
+            tweets = self.api.GetUserTimeline(
+                screen_name=handle, count=number, include_rts=False)
         except Exception as e:
             th_logger.error(e)
             exit(1)
