@@ -5,3 +5,4 @@ config.py
 last_tweet_id
 *.pyc
 *.log
+.env
